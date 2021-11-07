@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: ping
+testFramework: junit
+sourceLanguage: java
+buildTool: maven
+features: [annotation-api, app-name, graalvm, http-client, java, java-application, junit, logback, management, maven, micrometer, micrometer-atlas, netty-server, readme, shade, yaml]

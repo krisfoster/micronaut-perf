@@ -1,0 +1,8 @@
+FROM ghcr.io/graalvm/graalvm-ce:java11-21.3
+
+ARG JAR_FILE
+COPY ./target/${JAR_FILE} /app.jar
+WORKDIR /
+
+EXPOSE 8080
+CMD ["java", "-cp", "./app.jar", "ping.Application"]

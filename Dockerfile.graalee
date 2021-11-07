@@ -1,0 +1,8 @@
+FROM container-registry.oracle.com/graalvm/enterprise:ol7-java11-21.3.0
+
+ARG JAR_FILE
+COPY ./target/${JAR_FILE} /app.jar
+WORKDIR /
+
+EXPOSE 8080
+CMD ["java", "-cp", "./app.jar", "ping.Application"]

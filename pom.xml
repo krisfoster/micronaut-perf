@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>krisfoster</groupId>
+  <artifactId>ping</artifactId>
+  <version>0.2</version>
+  <packaging>${packaging}</packaging>
+
+  <parent>
+    <groupId>io.micronaut</groupId>
+    <artifactId>micronaut-parent</artifactId>
+    <version>3.1.1</version>
+  </parent>
+
+  <properties>
+    <packaging>jar</packaging>
+    <jdk.version>11</jdk.version>
+    <release.version>11</release.version>
+    <micronaut.version>3.1.1</micronaut.version>
+    <exec.mainClass>ping.Application</exec.mainClass>
+    <micronaut.runtime>netty</micronaut.runtime>
+    <native.maven.plugin.version>0.9.6</native.maven.plugin.version>
+  </properties>
+
+  <profiles>
+    <profile>
+      <id>openjdk</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>!static</name>
+        </property>
+      </activation>
+      <properties>
+        <base.image>openjdk</base.image>
+        <docker.file>Dockerfile.${base.image}</docker.file>
+      </properties>
+    </profile>
+    <profile>
+      <id>graalce</id>
+      <properties>
+        <base.image>graalce</base.image>
+        <docker.file>Dockerfile.${base.image}</docker.file>
+      </properties>
+    </profile>
+    <profile>
+      <id>graalee</id>
+      <properties>
+        <base.image>graalee</base.image>
+        <docker.file>Dockerfile.${base.image}</docker.file>
+      </properties>
+    </profile>
+    <profile>
+      <id>nativeee</id>
+      <properties>
+        <base.image>natveee</base.image>
+        <docker.file>Dockerfile.${base.image}</docker.file>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.graalvm.buildtools</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+            <version>${native.maven.plugin.version}</version>
+            <extensions>true</extensions>
+            <executions>
+              <execution>
+                <id>build-native</id>
+                <goals>
+                  <goal>build</goal>
+                </goals>
+                <phase>package</phase>
+              </execution>
+              <execution>
+                <id>test-native</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <phase>test</phase>
+              </execution>
+            </executions>
+            <configuration>
+              <mainClass>ping.Application</mainClass>
+              <buildArgs>
+                <buildArg>--no-fallback</buildArg>
+                <!-- Add support for G1GC -->
+                <buildArg>--gc=G1</buildArg>
+                <buildArg>-H:+ReportExceptionStackTraces</buildArg>
+                <buildArg>--enable-all-security-services</buildArg>
+              </buildArgs>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+  <repositories>
+    <repository>
+      <id>central</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-inject</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-validation</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.test</groupId>
+      <artifactId>micronaut-test-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-http-client</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-http-server-netty</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-management</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-runtime</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.micrometer</groupId>
+      <artifactId>micronaut-micrometer-core</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!--dependency>
+      <groupId>io.micronaut.micrometer</groupId>
+      <artifactId>micronaut-micrometer-registry-atlas</artifactId>
+      <scope>compile</scope>
+    </dependency-->
+    <dependency>
+      <groupId>io.micronaut.micrometer</groupId>
+      <artifactId>micronaut-micrometer-annotation</artifactId>
+      <scope>annotationProcessor</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>io.micronaut.micrometer</groupId>
+        <artifactId>micronaut-micrometer-registry-prometheus</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>io.micronaut.build</groupId>
+        <artifactId>micronaut-maven-plugin</artifactId>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <!-- Uncomment to enable incremental compilation -->
+          <!-- <useIncrementalCompilation>false</useIncrementalCompilation> -->
+
+          <annotationProcessorPaths combine.children="append">
+            <path>
+              <groupId>io.micronaut</groupId>
+              <artifactId>micronaut-http-validation</artifactId>
+              <version>${micronaut.version}</version>
+            </path>
+          </annotationProcessorPaths>
+          <compilerArgs>
+            <arg>-Amicronaut.processing.group=ping</arg>
+            <arg>-Amicronaut.processing.module=ping</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+
+      <!--
+      Docker build
+      -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.6.0</version>
+        <executions>
+          <!-- Remove existing image from local repo -->
+          <!--execution>
+            <id>docker-clean</id>
+            <phase>install</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>docker</executable>
+              <workingDirectory>${project.basedir}</workingDirectory>
+              <arguments>
+                <argument>rmi</argument>
+                <argument>${project.groupId}/${project.artifactId}:${project.version}</argument>
+              </arguments>
+            </configuration>
+          </execution-->
+
+          <!--
+            Create new docker image using Dockerfile which must be present in current working directory.
+            Tag the image using maven project version information.
+          -->
+          <execution>
+            <id>docker-build</id>
+            <phase>install</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>docker</executable>
+              <workingDirectory>${project.basedir}</workingDirectory>
+              <commandlineArgs>build -f ${docker.file} --build-arg JAR_FILE=${project.artifactId}-${project.version}.jar -t ${project.groupId}/${project.artifactId}:${base.image}.${project.version} .</commandlineArgs>
+            </configuration>
+          </execution>
+
+          <!-- Login and Push the image to a docker repo. -->
+          <!--execution>
+            <id>docker-login</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>docker</executable>
+              <workingDirectory>${project.basedir}</workingDirectory>
+              <arguments>
+                <argument>login</argument>
+                <argument>-u</argument>
+                <argument>${docker.user}</argument>
+                <argument>-p</argument>
+                <argument>${docker.password}</argument>
+                <argument>${docker.url}</argument>
+              </arguments>
+            </configuration>
+          </execution-->
+          <execution>
+            <id>docker-push</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>docker</executable>
+              <workingDirectory>${project.basedir}</workingDirectory>
+              <commandlineArgs>push ${project.groupId}/${project.artifactId}:${base.image}.${project.version}</commandlineArgs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+
+  </build>
+
+</project>

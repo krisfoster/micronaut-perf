@@ -1,0 +1,18 @@
+micronaut:
+  application:
+    name: ping
+  metrics:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+        step: PT5S
+        descriptions: true
+endpoints:
+  prometheus:
+    sensitive: false
+
+#  server:
+#    netty:
+#      access-logger:
+#        enabled: true
