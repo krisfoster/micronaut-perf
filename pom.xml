@@ -117,7 +117,9 @@
   -->
   <dependencies>
     <!-- Annotation deps -->
-    <dependency>
+    <!-- I was trying out the following anotation processors - but not sure if they are needed nor how
+    to get them working -->
+    <!--dependency>
       <groupId>io.micronaut.micrometer</groupId>
       <artifactId>micronaut-graal</artifactId>
       <scope>compile</scope>
@@ -126,13 +128,17 @@
       <groupId>io.micronaut.micrometer</groupId>
       <artifactId>micronaut-micrometer-annotation</artifactId>
       <scope>compile</scope>
+    </dependency-->
+    <dependency>
+      <groupId>io.micronaut.micrometer</groupId>
+      <artifactId>micronaut-micrometer-annotation</artifactId>
+      <scope>annotationProcessor</scope>
     </dependency>
     <dependency>
       <groupId>javax.annotation</groupId>
-      <artifactId>compile</artifactId>
+      <artifactId>javax.annotation-api</artifactId>
       <scope>compile</scope>
     </dependency>
-
     <!-- Test deps -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -217,10 +223,11 @@
               <artifactId>micronaut-http-validation</artifactId>
               <version>${micronaut.version}</version>
             </path>
-            <path>
+            <!-- Tried adding this, but not sure if needed? -->
+            <!--path>
               <groupId>io.micronaut</groupId>
               <artifactId>micronaut-graal</artifactId>
-            </path>
+            </path-->
           </annotationProcessorPaths>
           <compilerArgs>
             <arg>-Amicronaut.processing.group=ping</arg>

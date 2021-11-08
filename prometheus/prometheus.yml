@@ -37,5 +37,10 @@ scrape_configs:
     scrape_interval: 10s
     static_configs:
       - targets: ['ping-graalee:8080']
+  - job_name: ping.native
+    metrics_path: /prometheus
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['ping-native-ee:8080']
 
 
