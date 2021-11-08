@@ -1,55 +1,73 @@
-## Micronaut 3.1.1 Documentation
+# Micronaut : Comparing A simple Application Running on Different Deplyment Runtimes
 
-- [User Guide](https://docs.micronaut.io/3.1.1/guide/index.html)
-- [API Reference](https://docs.micronaut.io/3.1.1/api/index.html)
-- [Configuration Reference](https://docs.micronaut.io/3.1.1/guide/configurationreference.html)
-- [Micronaut Guides](https://guides.micronaut.io/index.html)
----
+The idea is to deploy the same micronaut application onto different runtimes to compare the performance charecteristics.
 
-## Feature management documentation
+Deployment choices - detaisl on containers used can be taken from the docker files:
+* OpenJDK 11
+* GraalCE 21.3.0 JDK 11
+* GraalEE 21.3.0 JDK 11
+* GraalEE 21.3.0 JDK 11, Native Image
 
-- [Micronaut Management documentation](https://docs.micronaut.io/latest/guide/index.html#management)
+## Building
 
-## Feature http-client documentation
+To build:
 
-- [Micronaut HTTP Client documentation](https://docs.micronaut.io/latest/guide/index.html#httpClient)
+```shell
+./build.sh
+```
 
-              <arguments>
-                <argument>build</argument>
-                <!-- Specify a dockerfile to use - we use profiles to switch between dockerfiles -->
-                <argument>-f</argument>
-                <argument>${docker.file}</argument>
-                <!-- Tag the image. Note we append the name of the dockerfile in order to switch between images
-                 in different kinds of containers -->
-                <argument>-t</argument>
-                <argument>${project.groupId}/${project.artifactId}:${project.version}</argument>
-                <argument>.</argument>
-              </arguments>
+**NOTE** : On linux the build script will build the native image directly on your OS and then package it. On OSX we
+need to use an intermediaate docker container to build, so that we can generate a linux compatible executable. The build script *should* 
+handle this.
 
-<commandlineArgs>build -f ${docker.file} -t ${project.groupId}/${project.artifactId}:${project.version} .</commandlineArgs>
+## Running
+
+```shell
+docker-compose up
+```
+
+From a separate shell - to run the stress testing scripting:
+
+```shell
+./scripts/stress.sh
+```
+This will generate a number of file ending with `*.hey.out`. These are the output from the stress testing tool, `hey`. They display stats an a 
+latency bar chart for each deployed endpoint.
 
 
-container-registry.oracle.com/graalvm/native-image-ee:ol7-java11-21.3.0
+## Prometheus Query for HTTP Requests Per Second
+Use the following query to get requests per second stats for the ping URL for all running services:
+```
+http_server_requests_seconds_sum{uri="/ping"}
+```
 
+## Ideas for Improvement
+
+### Lanuch Stress Testing From Docker Compose
+Add the following to the `docker-compose.yml`:
+```yaml
 stress-openjdk:
-image: ricoli/hey
-command: -n 10000000 http://ping-openjdk:8080
-depends_on:
-- "ping-openjdk"
+  image: ricoli/hey
+  command: -n 10000000 http://ping-openjdk:8080
+  depends_on:
+    - "ping-openjdk"
 stress-graalce:
-image: ricoli/hey
-command: -n 10000000 http://ping-graalce:8080
-depends_on:
-- "ping-graalce"
+  image: ricoli/hey
+  command: -n 10000000 http://ping-graalce:8080
+  depends_on:
+    - "ping-graalce"
 stress-graalee:
-image: ricoli/hey
-command: -n 10000000 http://ping-graalee:8080
-depends_on:
-- "ping-graalee"
+  image: ricoli/hey
+  command: -n 10000000 http://ping-graalee:8080
+  depends_on:
+    - "ping-graalee"
 stress-native-ee:
-image: ricoli/hey
-command: -n 10000000 http://ping-native-ee:8080
-depends_on:
-- "ping-native-ee"
+  image: ricoli/hey
+  command: -n 10000000 http://ping-native-ee:8080
+  depends_on:
+    - "ping-native-ee"
+```
 
+
+rate(http_server_requests_seconds_sum{uri="/ping"}[10s])
 
