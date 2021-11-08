@@ -15,7 +15,7 @@ mvn clean install -Pgraalee -DskipTests
 
 unameOut="$(uname -s)"
 case "${unameOut}" in
-    Linux*)     mvn install -Pnativeee -DskipTests && docker build -f Dockerfile.native --build-arg APP_FILE=ping -t krisfoster/ping:native.0.2 .;;
+    Linux*)     mvn package -Pnative -DskipTests && docker build -f Dockerfile.native --build-arg APP_FILE=ping -t krisfoster/ping:native.0.2 .;;
     Darwin*)    docker build -f ./docker-ni-build/Dockerfile.nativebuild -t krisfoster/ping:native.0.2 .;;
     *)          echo "Not running on Linux / OX - so not bulding a native image....";;
 esac
