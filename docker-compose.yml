@@ -36,6 +36,18 @@ services:
       - "prom"
     ports:
       - "8087:8080"
+  ping-native-ee:
+    image: krisfoster/ping:native.0.2
+    restart: always
+    mem_limit: 256m
+    memswap_limit: 256m
+    cpu_count: 1
+    cpu_percent: 100
+    cpus: 1
+    depends_on:
+      - "prom"
+    ports:
+      - "8088:8080"
   prom:
     image: prom/prometheus
     volumes:
@@ -46,19 +58,3 @@ services:
     image: grafana/grafana
     ports:
       - "3000:3000"
-  stress-openjdk:
-    image: ricoli/hey
-    command: -n 10000000 http://ping-openjdk:8080
-    depends_on:
-      - "ping-openjdk"
-  stress-graalce:
-    image: ricoli/hey
-    command: -n 10000000 http://ping-graalce:8080
-    depends_on:
-      - "ping-graalce"
-  stress-graalee:
-    image: ricoli/hey
-    command: -n 10000000 http://ping-graalee:8080
-    depends_on:
-      - "ping-graalee"
-

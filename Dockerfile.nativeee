@@ -1,10 +1,9 @@
 FROM container-registry.oracle.com/graalvm/native-image-ee:ol7-java11-21.3.0-b1
 
 ARG JAR_FILE
-COPY . /
+COPY ./target/${JAR_FILE} /app
 WORKDIR /
 
-# Do the build in the linux docker container - so we have support for running it in docker on linux
-RUN ./mvnw clean install -Pnativeee -DskipTests
-
 EXPOSE 8080
+CMD ["/app"]
+

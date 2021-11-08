@@ -13,6 +13,9 @@
     <version>3.1.1</version>
   </parent>
 
+  <!--
+  Properties
+   -->
   <properties>
     <packaging>jar</packaging>
     <jdk.version>11</jdk.version>
@@ -23,6 +26,9 @@
     <native.maven.plugin.version>0.9.6</native.maven.plugin.version>
   </properties>
 
+  <!--
+  Profiles
+    -->
   <profiles>
     <profile>
       <id>openjdk</id>
@@ -54,7 +60,7 @@
     <profile>
       <id>nativeee</id>
       <properties>
-        <base.image>natveee</base.image>
+        <base.image>nativeee</base.image>
         <docker.file>Dockerfile.${base.image}</docker.file>
       </properties>
       <build>
@@ -85,7 +91,7 @@
               <buildArgs>
                 <buildArg>--no-fallback</buildArg>
                 <!-- Add support for G1GC -->
-                <buildArg>--gc=G1</buildArg>
+                <!--buildArg>- -gc=G1</buildArg-->
                 <buildArg>-H:+ReportExceptionStackTraces</buildArg>
                 <buildArg>--enable-all-security-services</buildArg>
               </buildArgs>
@@ -96,6 +102,9 @@
     </profile>
   </profiles>
 
+  <!--
+  Repos
+  -->
   <repositories>
     <repository>
       <id>central</id>
@@ -103,17 +112,28 @@
     </repository>
   </repositories>
 
+  <!--
+  Deps
+  -->
   <dependencies>
+    <!-- Annotation deps -->
     <dependency>
-      <groupId>io.micronaut</groupId>
-      <artifactId>micronaut-inject</artifactId>
+      <groupId>io.micronaut.micrometer</groupId>
+      <artifactId>micronaut-graal</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>io.micronaut</groupId>
-      <artifactId>micronaut-validation</artifactId>
+      <groupId>io.micronaut.micrometer</groupId>
+      <artifactId>micronaut-micrometer-annotation</artifactId>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>compile</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- Test deps -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
@@ -128,6 +148,18 @@
       <groupId>io.micronaut.test</groupId>
       <artifactId>micronaut-test-junit5</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <!-- And the rest -->
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-inject</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-validation</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.micronaut</groupId>
@@ -152,21 +184,6 @@
     <dependency>
       <groupId>io.micronaut.micrometer</groupId>
       <artifactId>micronaut-micrometer-core</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <!--dependency>
-      <groupId>io.micronaut.micrometer</groupId>
-      <artifactId>micronaut-micrometer-registry-atlas</artifactId>
-      <scope>compile</scope>
-    </dependency-->
-    <dependency>
-      <groupId>io.micronaut.micrometer</groupId>
-      <artifactId>micronaut-micrometer-annotation</artifactId>
-      <scope>annotationProcessor</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -200,6 +217,10 @@
               <artifactId>micronaut-http-validation</artifactId>
               <version>${micronaut.version}</version>
             </path>
+            <path>
+              <groupId>io.micronaut</groupId>
+              <artifactId>micronaut-graal</artifactId>
+            </path>
           </annotationProcessorPaths>
           <compilerArgs>
             <arg>-Amicronaut.processing.group=ping</arg>
@@ -216,23 +237,6 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>1.6.0</version>
         <executions>
-          <!-- Remove existing image from local repo -->
-          <!--execution>
-            <id>docker-clean</id>
-            <phase>install</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>docker</executable>
-              <workingDirectory>${project.basedir}</workingDirectory>
-              <arguments>
-                <argument>rmi</argument>
-                <argument>${project.groupId}/${project.artifactId}:${project.version}</argument>
-              </arguments>
-            </configuration>
-          </execution-->
-
           <!--
             Create new docker image using Dockerfile which must be present in current working directory.
             Tag the image using maven project version information.
@@ -250,38 +254,6 @@
             </configuration>
           </execution>
 
-          <!-- Login and Push the image to a docker repo. -->
-          <!--execution>
-            <id>docker-login</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>docker</executable>
-              <workingDirectory>${project.basedir}</workingDirectory>
-              <arguments>
-                <argument>login</argument>
-                <argument>-u</argument>
-                <argument>${docker.user}</argument>
-                <argument>-p</argument>
-                <argument>${docker.password}</argument>
-                <argument>${docker.url}</argument>
-              </arguments>
-            </configuration>
-          </execution-->
-          <execution>
-            <id>docker-push</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>docker</executable>
-              <workingDirectory>${project.basedir}</workingDirectory>
-              <commandlineArgs>push ${project.groupId}/${project.artifactId}:${base.image}.${project.version}</commandlineArgs>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
     </plugins>

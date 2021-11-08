@@ -1,4 +1,4 @@
-FROM container-registry.oracle.com/graalvm/enterprise:ol7-java11-21.3.0
+FROM container-registry.oracle.com/graalvm/enterprise:ol7-java11-21.3.0-b1
 
 ARG JAR_FILE
 COPY ./target/${JAR_FILE} /app.jar

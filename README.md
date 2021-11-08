@@ -30,3 +30,26 @@
 
 
 container-registry.oracle.com/graalvm/native-image-ee:ol7-java11-21.3.0
+
+stress-openjdk:
+image: ricoli/hey
+command: -n 10000000 http://ping-openjdk:8080
+depends_on:
+- "ping-openjdk"
+stress-graalce:
+image: ricoli/hey
+command: -n 10000000 http://ping-graalce:8080
+depends_on:
+- "ping-graalce"
+stress-graalee:
+image: ricoli/hey
+command: -n 10000000 http://ping-graalee:8080
+depends_on:
+- "ping-graalee"
+stress-native-ee:
+image: ricoli/hey
+command: -n 10000000 http://ping-native-ee:8080
+depends_on:
+- "ping-native-ee"
+
+
