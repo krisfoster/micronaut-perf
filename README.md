@@ -36,6 +36,8 @@ latency bar chart for each deployed endpoint.
 
 
 ## Prometheus Query for HTTP Requests Per Second
+Prometheus can be accesed from - [http://localhost:9090/graph](http://localhost:9090/graph).
+
 Use the following query to get requests per second stats for the ping URL for all running services:
 ```
 http_server_requests_seconds_sum{uri="/ping"}
@@ -67,7 +69,3 @@ stress-native-ee:
   depends_on:
     - "ping-native-ee"
 ```
-
-
-rate(http_server_requests_seconds_sum{uri="/ping"}[10s])
-
