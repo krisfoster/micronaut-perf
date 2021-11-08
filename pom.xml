@@ -58,9 +58,9 @@
       </properties>
     </profile>
     <profile>
-      <id>nativeee</id>
+      <id>native</id>
       <properties>
-        <base.image>nativeee</base.image>
+        <base.image>native</base.image>
         <docker.file>Dockerfile.${base.image}</docker.file>
       </properties>
       <build>
@@ -91,7 +91,7 @@
               <buildArgs>
                 <buildArg>--no-fallback</buildArg>
                 <!-- Add support for G1GC -->
-                <!--buildArg>- -gc=G1</buildArg-->
+                <buildArg>--gc=G1</buildArg>
                 <buildArg>-H:+ReportExceptionStackTraces</buildArg>
                 <buildArg>--enable-all-security-services</buildArg>
               </buildArgs>
@@ -257,7 +257,7 @@
             <configuration>
               <executable>docker</executable>
               <workingDirectory>${project.basedir}</workingDirectory>
-              <commandlineArgs>build -f ${docker.file} --build-arg JAR_FILE=${project.artifactId}-${project.version}.jar -t ${project.groupId}/${project.artifactId}:${base.image}.${project.version} .</commandlineArgs>
+              <commandlineArgs>build -f ${docker.file} --build-arg JAR_FILE=${project.artifactId}-${project.version}.jar -t ${project.artifactId}:${base.image}.${project.version} .</commandlineArgs>
             </configuration>
           </execution>
 

@@ -1,7 +1,7 @@
 FROM container-registry.oracle.com/graalvm/native-image-ee:ol7-java11-21.3.0-b1
 
-ARG JAR_FILE
-COPY ./target/${JAR_FILE} /app
+ARG APP_FILE
+COPY ./target/${APP_FILE} /app
 WORKDIR /
 
 EXPOSE 8080
